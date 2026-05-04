@@ -67,6 +67,23 @@ launchctl load ~/Library/LaunchAgents/com.soca.weather-bot.plist
 - ❄️ 入夜後最低溫
 - 🌧️ 降雨機率與預估雨量
 - 📈 額外提示（溫差大、低溫保暖、高溫補水）
+- ✨ 今日語錄：多語言名言佳句（中、英、日、法、德、西、拉丁、古希臘、古文）——原文 + 中文白話翻譯
+
+## 語錄庫
+
+語錄存在 [`quotes.json`](./quotes.json)，可以自由增刪。每則語錄的 schema：
+
+```json
+{
+  "lang": "en | zh-classical | zh-modern | ja | fr | de | es | la | grc",
+  "original": "原文",
+  "translation": "中文白話翻譯（現代中文可以填 '—'）",
+  "author": "作者",
+  "source": "出處"
+}
+```
+
+避免短期重複的 state 檔存在 `~/.openclaw/state/weather_bot_quote_state.json`。
 
 ## 失敗處理
 

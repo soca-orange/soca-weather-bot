@@ -1,0 +1,282 @@
+[
+  {
+    "lang": "zh-classical",
+    "original": "三人行，必有我師焉。擇其善者而從之，其不善者而改之。",
+    "translation": "三個人一起走，裡面一定有值得我學習的人。看到好的就跟著做，看到不好的就拿來反省自己。",
+    "author": "孔子",
+    "source": "《論語‧述而》"
+  },
+  {
+    "lang": "zh-classical",
+    "original": "知之為知之，不知為不知，是知也。",
+    "translation": "知道就是知道，不知道就是不知道,這才是真正的智慧。",
+    "author": "孔子",
+    "source": "《論語‧為政》"
+  },
+  {
+    "lang": "zh-classical",
+    "original": "天行健,君子以自強不息。",
+    "translation": "天道運行剛健不息,有志者也應當自我激勵、永不懈怠。",
+    "author": "佚名",
+    "source": "《周易‧乾卦‧象傳》"
+  },
+  {
+    "lang": "zh-classical",
+    "original": "吾生也有涯,而知也無涯。",
+    "translation": "人的生命是有限的,而知識是無窮的。",
+    "author": "莊子",
+    "source": "《莊子‧養生主》"
+  },
+  {
+    "lang": "zh-classical",
+    "original": "禍兮福之所倚,福兮禍之所伏。",
+    "translation": "災禍裡藏著福氣的種子,福氣裡也潛伏著災禍的影子。",
+    "author": "老子",
+    "source": "《道德經》第五十八章"
+  },
+  {
+    "lang": "zh-classical",
+    "original": "千里之行,始於足下。",
+    "translation": "再遙遠的路,也是從第一步開始走的。",
+    "author": "老子",
+    "source": "《道德經》第六十四章"
+  },
+  {
+    "lang": "zh-classical",
+    "original": "海納百川,有容乃大;壁立千仞,無欲則剛。",
+    "translation": "大海能容下千百條河流,因為它夠寬;懸崖能聳立千仞,因為它無所欲求而剛強。",
+    "author": "林則徐",
+    "source": "自題聯"
+  },
+  {
+    "lang": "zh-classical",
+    "original": "行到水窮處,坐看雲起時。",
+    "translation": "走到水的盡頭似乎沒路了,那就坐下來,看雲從遠方緩緩升起。",
+    "author": "王維",
+    "source": "《終南別業》"
+  },
+  {
+    "lang": "zh-classical",
+    "original": "勝人者有力,自勝者強。",
+    "translation": "能戰勝別人只是有力氣,能戰勝自己才是真正的強者。",
+    "author": "老子",
+    "source": "《道德經》第三十三章"
+  },
+  {
+    "lang": "en",
+    "original": "The only way to do great work is to love what you do.",
+    "translation": "做出偉大成果的唯一方法,就是熱愛你正在做的事。",
+    "author": "Steve Jobs",
+    "source": "Stanford Commencement, 2005"
+  },
+  {
+    "lang": "en",
+    "original": "We are what we repeatedly do. Excellence, then, is not an act, but a habit.",
+    "translation": "我們的本質,是由日復一日做的事情塑造出來的。所以卓越不是一個動作,而是一種習慣。",
+    "author": "Will Durant（轉述亞里士多德）",
+    "source": "The Story of Philosophy"
+  },
+  {
+    "lang": "en",
+    "original": "In the middle of difficulty lies opportunity.",
+    "translation": "困難之中,藏著機會。",
+    "author": "Albert Einstein",
+    "source": "（廣為流傳的引用）"
+  },
+  {
+    "lang": "en",
+    "original": "Not all those who wander are lost.",
+    "translation": "並非所有流浪的人都迷失了方向。",
+    "author": "J.R.R. Tolkien",
+    "source": "The Fellowship of the Ring"
+  },
+  {
+    "lang": "en",
+    "original": "What we think, we become.",
+    "translation": "我們想什麼,就會成為什麼樣的人。",
+    "author": "（傳為佛陀,實為現代轉述）",
+    "source": "（現代英譯,出處存疑）"
+  },
+  {
+    "lang": "en",
+    "original": "Be yourself; everyone else is already taken.",
+    "translation": "做你自己,因為其他角色都被別人扮去了。",
+    "author": "Oscar Wilde",
+    "source": "（廣為流傳的引用）"
+  },
+  {
+    "lang": "en",
+    "original": "It does not matter how slowly you go as long as you do not stop.",
+    "translation": "走得多慢都沒關係,只要你不停下來。",
+    "author": "Confucius（西方流傳版本)",
+    "source": "（西方常引用版本,中文原典難以對應)"
+  },
+  {
+    "lang": "ja",
+    "original": "七転び八起き。",
+    "translation": "跌倒七次,就站起來八次。",
+    "author": "日本諺語",
+    "source": "（傳統諺語）"
+  },
+  {
+    "lang": "ja",
+    "original": "石の上にも三年。",
+    "translation": "就算是冰冷的石頭,坐上三年也會被體溫暖熱。意思是堅持下去總會有回報。",
+    "author": "日本諺語",
+    "source": "（傳統諺語）"
+  },
+  {
+    "lang": "ja",
+    "original": "井の中の蛙、大海を知らず。されど空の青さを知る。",
+    "translation": "井底之蛙不知道大海有多遼闊,但牠知道天空有多藍。",
+    "author": "日本諺語（後半為現代追加）",
+    "source": "（傳統諺語的現代延伸版）"
+  },
+  {
+    "lang": "ja",
+    "original": "明日は明日の風が吹く。",
+    "translation": "明天會有明天的風。意思是船到橋頭自然直,別把今天的煩惱帶到明天。",
+    "author": "日本諺語",
+    "source": "（傳統諺語）"
+  },
+  {
+    "lang": "ja",
+    "original": "花は桜木、人は武士。",
+    "translation": "花要看櫻花,人要做武士。意指做人要有風骨,在最美的時候就乾脆地謝幕。",
+    "author": "日本諺語",
+    "source": "（江戶時代俗諺）"
+  },
+  {
+    "lang": "fr",
+    "original": "On ne voit bien qu'avec le cœur. L'essentiel est invisible pour les yeux.",
+    "translation": "只有用心才能看得清楚。最重要的東西用眼睛是看不見的。",
+    "author": "Antoine de Saint-Exupéry",
+    "source": "《小王子》(Le Petit Prince)"
+  },
+  {
+    "lang": "fr",
+    "original": "Je pense, donc je suis.",
+    "translation": "我思,故我在。",
+    "author": "René Descartes",
+    "source": "《方法論》(Discours de la méthode), 1637"
+  },
+  {
+    "lang": "fr",
+    "original": "L'enfer, c'est les autres.",
+    "translation": "他人即地獄。意思是我們對自己的看法,常常被他人的眼光所綁架。",
+    "author": "Jean-Paul Sartre",
+    "source": "《禁閉》(Huis clos), 1944"
+  },
+  {
+    "lang": "de",
+    "original": "Was mich nicht umbringt, macht mich stärker.",
+    "translation": "凡殺不死我的,必使我更強大。",
+    "author": "Friedrich Nietzsche",
+    "source": "《偶像的黃昏》(Götzen-Dämmerung), 1888"
+  },
+  {
+    "lang": "de",
+    "original": "Wer A sagt, muss auch B sagen.",
+    "translation": "說了 A,就也得說 B。意思是事情要做就做完整,別只開頭不收尾。",
+    "author": "德國諺語",
+    "source": "（傳統諺語）"
+  },
+  {
+    "lang": "es",
+    "original": "No hay mal que por bien no venga.",
+    "translation": "沒有一件壞事不會帶來好的一面。",
+    "author": "西班牙諺語",
+    "source": "（傳統諺語）"
+  },
+  {
+    "lang": "es",
+    "original": "Caminante, no hay camino, se hace camino al andar.",
+    "translation": "旅人啊,本來沒有路;路是一邊走、一邊走出來的。",
+    "author": "Antonio Machado",
+    "source": "《Proverbios y cantares XXIX》, 1912"
+  },
+  {
+    "lang": "la",
+    "original": "Carpe diem, quam minimum credula postero.",
+    "translation": "把握今天,別把太多希望寄託在明天。",
+    "author": "Horatius (賀拉斯)",
+    "source": "《頌歌集》(Carmina) I.11, 約 23 BC"
+  },
+  {
+    "lang": "la",
+    "original": "Per aspera ad astra.",
+    "translation": "經歷艱辛,抵達群星。",
+    "author": "拉丁諺語",
+    "source": "（傳統格言）"
+  },
+  {
+    "lang": "la",
+    "original": "Memento mori.",
+    "translation": "記得你終將一死。提醒人珍惜當下、不要為小事煩惱。",
+    "author": "拉丁警句",
+    "source": "（古羅馬格言）"
+  },
+  {
+    "lang": "grc",
+    "original": "γνῶθι σεαυτόν",
+    "translation": "認識你自己。",
+    "author": "古希臘格言",
+    "source": "刻於德爾菲阿波羅神殿"
+  },
+  {
+    "lang": "grc",
+    "original": "πάντα ῥεῖ",
+    "translation": "萬物皆流(一切都在流動變化)。",
+    "author": "Heraclitus (赫拉克利特)",
+    "source": "（殘篇,西元前 5 世紀）"
+  },
+  {
+    "lang": "zh-modern",
+    "original": "你的問題主要在於讀書不多而想得太多。",
+    "translation": "—",
+    "author": "楊絳（傳）",
+    "source": "（網路廣傳,真實出處存疑,但話本身有意思）"
+  },
+  {
+    "lang": "zh-modern",
+    "original": "生活從來不會虧待認真的人。",
+    "translation": "—",
+    "author": "佚名",
+    "source": "（現代格言）"
+  },
+  {
+    "lang": "zh-modern",
+    "original": "我們的征途是星辰大海。",
+    "translation": "—",
+    "author": "田中芳樹（《銀河英雄傳說》中譯流傳語）",
+    "source": "《銀河英雄傳說》中文譯本廣為流傳"
+  },
+  {
+    "lang": "en",
+    "original": "Premature optimization is the root of all evil.",
+    "translation": "過早優化是萬惡之源。",
+    "author": "Donald Knuth",
+    "source": "Structured Programming with go to Statements, 1974"
+  },
+  {
+    "lang": "en",
+    "original": "Simplicity is the ultimate sophistication.",
+    "translation": "簡單,是最高境界的精緻。",
+    "author": "（傳為達文西,實為 1977 Apple 廣告詞）",
+    "source": "（廣為流傳的引用,出處存疑）"
+  },
+  {
+    "lang": "en",
+    "original": "The future is already here — it's just not evenly distributed.",
+    "translation": "未來其實已經到了——只是還沒平均分布到每個人身上。",
+    "author": "William Gibson",
+    "source": "The Economist, 2003 (大致時期)"
+  },
+  {
+    "lang": "zh-classical",
+    "original": "山高月小,水落石出。",
+    "translation": "山看起來更高了,月亮顯得更小;水退了,石頭就露出來。意指真相終會浮現。",
+    "author": "蘇軾",
+    "source": "《後赤壁賦》"
+  }
+]

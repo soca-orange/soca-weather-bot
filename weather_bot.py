@@ -19,11 +19,17 @@ import urllib.request
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
+from quote_picker import pick_and_format
+
 # ── 設定 ──────────────────────────────────────────────────────────────
 HOME = Path.home()
 SECRETS_DIR = HOME / ".openclaw" / "secrets"
 TOKEN_FILE = SECRETS_DIR / "weather_bot_token"
 CHAT_ID_FILE = SECRETS_DIR / "weather_bot_chat_id"
+
+PROJECT_DIR = Path(__file__).resolve().parent
+QUOTES_FILE = PROJECT_DIR / "quotes.json"
+QUOTE_STATE_FILE = HOME / ".openclaw" / "state" / "weather_bot_quote_state.json"
 
 LOG_DIR = HOME / "projects" / "soca-weather-bot" / "logs"
 LOG_DIR.mkdir(parents=True, exist_ok=True)
@@ -209,6 +215,16 @@ def build_broadcast(data: dict) -> str:
     elif t_max >= 32:
         lines.append("")
         lines.append("💧 高溫炎熱，請多補充水分、避免長時間曝曬。")
+
+    # 今日語錄(失敗就跳過,不影響天氣推播)
+    try:
+        quote_block = pick_and_format(QUOTES_FILE, QUOTE_STATE_FILE)
+        lines.append("")
+        lines.append("━━━━━━━━━━━━━━")
+        lines.append("")
+        lines.append(quote_block)
+    except Exception as e:
+        log.warning("產生語錄失敗(略過):%s", e)
 
     lines.append("")
     lines.append("祝你有美好的一天 🍊")
