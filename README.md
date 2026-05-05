@@ -2,7 +2,10 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
-每天 08:30（台北時間）自動推播台北天氣到 Telegram。
+每天兩次推播台北天氣到 Telegram：
+
+- **08:30 早安推播** → 「今日」天氣＋語錄
+- **23:00 晚安推播** → 「明日」預報（無語錄）
 
 > 由 [SOCA](https://github.com/soca-orange) 🍊（Samuel's OpenClaw Assistant）建立並維護。
 
@@ -12,7 +15,9 @@
 
 - **資料來源**：[Open-Meteo API](https://open-meteo.com/)（免費、無需 API key）
 - **推播**：獨立 Telegram Bot `@SOCAWeatherBot`
-- **排程**：macOS launchd（`~/Library/LaunchAgents/com.soca.weather-bot.plist`）
+- **排程**：macOS launchd
+  - `~/Library/LaunchAgents/com.soca.weather-bot.plist`（08:30 morning）
+  - `~/Library/LaunchAgents/com.soca.weather-bot-evening.plist`（23:00 evening）
 - **語言**：純 Python 3 標準函式庫，無第三方依賴
 
 ## 檔案
@@ -31,14 +36,16 @@
 └── weather_bot_chat_id   # 推播目標 chat_id (mode 600)
 
 ~/Library/LaunchAgents/
-└── com.soca.weather-bot.plist
+├── com.soca.weather-bot.plist          # morning (08:30)
+└── com.soca.weather-bot-evening.plist  # evening (23:00)
 ```
 
 ## 維運指令
 
 ```bash
 # 手動執行一次
-python3 ~/projects/soca-weather-bot/weather_bot.py
+python3 ~/projects/soca-weather-bot/weather_bot.py                    # morning (今日＋語錄)
+python3 ~/projects/soca-weather-bot/weather_bot.py --mode evening     # evening (明日)
 
 # 查看最近日誌
 tail -f ~/projects/soca-weather-bot/logs/$(date +%Y-%m).log
@@ -46,9 +53,11 @@ tail -f ~/projects/soca-weather-bot/logs/$(date +%Y-%m).log
 # 確認排程狀態
 launchctl list | grep weather-bot
 launchctl print gui/$(id -u)/com.soca.weather-bot
+launchctl print gui/$(id -u)/com.soca.weather-bot-evening
 
 # 立即觸發（測試）
 launchctl start com.soca.weather-bot
+launchctl start com.soca.weather-bot-evening
 
 # 暫停 / 恢復
 launchctl unload ~/Library/LaunchAgents/com.soca.weather-bot.plist
@@ -60,14 +69,14 @@ launchctl load ~/Library/LaunchAgents/com.soca.weather-bot.plist
 
 ## 內容欄位
 
-每日播報包含：
+每則播報包含：
 
 - 🔆 白天最高溫
 - 🌅 黃昏（日落時）氣溫
 - ❄️ 入夜後最低溫
 - 🌧️ 降雨機率與預估雨量
 - 📈 額外提示（溫差大、低溫保暖、高溫補水）
-- ✨ 今日語錄：多語言名言佳句（中、英、日、法、德、西、拉丁、古希臘、古文）——原文 + 中文白話翻譯
+- ✨ 今日語錄（僅 morning mode）：多語言名言佳句（中、英、日、法、德、西、拉丁、古希臘、古文）——原文 + 中文白話翻譯
 
 ## 語錄庫
 
@@ -115,7 +124,15 @@ launchctl load ~/Library/LaunchAgents/com.soca.weather-bot.plist
    ```bash
    python3 ~/projects/soca-weather-bot/weather_bot.py
    ```
-6. **設排程**（macOS）：複製 `com.soca.weather-bot.plist.example` 到 `~/Library/LaunchAgents/com.soca.weather-bot.plist`，把路徑改成你的，然後 `launchctl load`。
+6. **設排程**（macOS）：兩個 plist example 都需複製並換路徑：
+   ```bash
+   cp com.soca.weather-bot.plist.example         ~/Library/LaunchAgents/com.soca.weather-bot.plist
+   cp com.soca.weather-bot-evening.plist.example ~/Library/LaunchAgents/com.soca.weather-bot-evening.plist
+   # 把裡面的 YOUR_USERNAME 改成你的 username
+   launchctl load ~/Library/LaunchAgents/com.soca.weather-bot.plist
+   launchctl load ~/Library/LaunchAgents/com.soca.weather-bot-evening.plist
+   ```
+   只要早安、其中一個「總之一個就好」也可以，略過另一個。
 
 座標預設台北 101 周邊。要改地點，編輯 `weather_bot.py` 開頭的 `LAT` / `LON` / `TZ`。
 

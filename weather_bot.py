@@ -3,13 +3,16 @@
 SOCA Weather Bot — 台北每日天氣推播
 資料來源：Open-Meteo (https://open-meteo.com/)
 推播：Telegram Bot API
-排程：cron 每天 08:30 (Asia/Taipei)
+排程：launchd
+  - morning mode：每天 08:30 推「今日」天氣（含語錄）
+  - evening mode：每天 23:00 推「明日」天氣預報
 
 獨立腳本，與 OpenClaw / SOCA 主 bot 完全分離。
 """
 
 from __future__ import annotations
 
+import argparse
 import json
 import logging
 import os
@@ -40,15 +43,16 @@ LON = 121.5654
 TZ = "Asia/Taipei"
 TPE = timezone(timedelta(hours=8))
 
-OPEN_METEO_URL = (
-    "https://api.open-meteo.com/v1/forecast"
-    f"?latitude={LAT}&longitude={LON}"
-    "&daily=temperature_2m_max,temperature_2m_min,sunset,"
-    "precipitation_sum,precipitation_probability_max,weather_code"
-    "&hourly=temperature_2m,precipitation_probability,weather_code"
-    f"&timezone={urllib.parse.quote(TZ)}"
-    "&forecast_days=1"
-)
+def build_open_meteo_url(forecast_days: int) -> str:
+    return (
+        "https://api.open-meteo.com/v1/forecast"
+        f"?latitude={LAT}&longitude={LON}"
+        "&daily=temperature_2m_max,temperature_2m_min,sunset,"
+        "precipitation_sum,precipitation_probability_max,weather_code"
+        "&hourly=temperature_2m,precipitation_probability,weather_code"
+        f"&timezone={urllib.parse.quote(TZ)}"
+        f"&forecast_days={forecast_days}"
+    )
 
 # WMO weather code → (描述, emoji)
 # 參考: https://open-meteo.com/en/docs (WMO Weather interpretation codes)
@@ -147,32 +151,44 @@ def temp_at(hourly_times: list[str], hourly_temps: list[float], target_iso: str)
 
 
 # ── 主播稿 ───────────────────────────────────────────────────────────
-def build_broadcast(data: dict) -> str:
+def build_broadcast(data: dict, mode: str = "morning") -> str:
+    """
+    mode:
+      - "morning": 播「今天」(daily index 0)，含語錄、早安口吻
+      - "evening": 播「明天」(daily index 1)，不含語錄、晚安口吻
+    """
     daily = data["daily"]
     hourly = data["hourly"]
 
-    today_iso = daily["time"][0]
-    t_max = daily["temperature_2m_max"][0]
-    t_min = daily["temperature_2m_min"][0]
-    sunset_iso = daily["sunset"][0]  # e.g. 2026-05-04T18:25
-    pop_max = daily["precipitation_probability_max"][0]
-    rain_sum = daily["precipitation_sum"][0]
-    code = daily["weather_code"][0]
+    idx = 0 if mode == "morning" else 1
+
+    target_iso = daily["time"][idx]
+    t_max = daily["temperature_2m_max"][idx]
+    t_min = daily["temperature_2m_min"][idx]
+    sunset_iso = daily["sunset"][idx]
+    pop_max = daily["precipitation_probability_max"][idx]
+    rain_sum = daily["precipitation_sum"][idx]
+    code = daily["weather_code"][idx]
 
     desc, emoji = describe_weather(code)
 
     sunset_temp = temp_at(hourly["time"], hourly["temperature_2m"], sunset_iso)
     sunset_hhmm = datetime.fromisoformat(sunset_iso).strftime("%H:%M")
 
-    today_dt = datetime.fromisoformat(today_iso)
-    weekday_zh = ["一", "二", "三", "四", "五", "六", "日"][today_dt.weekday()]
-    date_str = today_dt.strftime(f"%-m月%-d日（週{weekday_zh}）")
+    target_dt = datetime.fromisoformat(target_iso)
+    weekday_zh = ["一", "二", "三", "四", "五", "六", "日"][target_dt.weekday()]
+    date_str = target_dt.strftime(f"%-m月%-d日（週{weekday_zh}）")
 
-    # 主播口吻
+    # 模式決定標題與開頭口吻
     lines = []
-    lines.append(f"<b>☀️ 台北今日天氣 — {date_str}</b>")
-    lines.append("")
-    lines.append(f"早安！今天台北{emoji} <b>{desc}</b>。")
+    if mode == "morning":
+        lines.append(f"<b>☀️ 台北今日天氣 — {date_str}</b>")
+        lines.append("")
+        lines.append(f"早安！今天台北{emoji} <b>{desc}</b>。")
+    else:
+        lines.append(f"<b>🌙 台北明日天氣 — {date_str}</b>")
+        lines.append("")
+        lines.append(f"晚安。明天台北{emoji} <b>{desc}</b>。")
     lines.append("")
     lines.append(f"🔆 白天最高溫 <b>{t_max:.1f}°C</b>")
     if sunset_temp is not None:
@@ -194,7 +210,7 @@ def build_broadcast(data: dict) -> str:
         elif pop_max and pop_max >= 30:
             lines.append(f"🌦️ 降雨機率 {pop_text}，可能會飄點雨，留意一下天色。")
         else:
-            lines.append(f"☂️ 降雨機率 {pop_text}，今天大致不必擔心下雨。")
+            lines.append(f"☂️ 降雨機率 {pop_text}，大致不必擔心下雨。")
     else:
         rain_str = f"{rain_sum:.1f} mm"
         if rain_sum >= 10:
@@ -204,7 +220,7 @@ def build_broadcast(data: dict) -> str:
         else:
             lines.append(f"🌦️ 降雨機率 {pop_text}，預估雨量 {rain_str}，可能會有零星短暫雨。")
 
-    # 結尾
+    # 額外提示
     diff = t_max - t_min
     if diff >= 10:
         lines.append("")
@@ -216,18 +232,22 @@ def build_broadcast(data: dict) -> str:
         lines.append("")
         lines.append("💧 高溫炎熱，請多補充水分、避免長時間曝曬。")
 
-    # 今日語錄(失敗就跳過,不影響天氣推播)
-    try:
-        quote_block = pick_and_format(QUOTES_FILE, QUOTE_STATE_FILE)
-        lines.append("")
-        lines.append("━━━━━━━━━━━━━━")
-        lines.append("")
-        lines.append(quote_block)
-    except Exception as e:
-        log.warning("產生語錄失敗(略過):%s", e)
+    # 語錄只在 morning mode 出現
+    if mode == "morning":
+        try:
+            quote_block = pick_and_format(QUOTES_FILE, QUOTE_STATE_FILE)
+            lines.append("")
+            lines.append("━━━━━━━━━━━━━━")
+            lines.append("")
+            lines.append(quote_block)
+        except Exception as e:
+            log.warning("產生語錄失敗(略過):%s", e)
 
     lines.append("")
-    lines.append("祝你有美好的一天 🍊")
+    if mode == "morning":
+        lines.append("祝你有美好的一天 🍊")
+    else:
+        lines.append("祝你有個好夢 🍊")
 
     return "\n".join(lines)
 
@@ -246,7 +266,17 @@ def send_telegram(token: str, chat_id: str, text: str) -> dict:
 
 # ── main ─────────────────────────────────────────────────────────────
 def main() -> int:
-    log.info("=== SOCA Weather Bot 啟動 ===")
+    parser = argparse.ArgumentParser(description="SOCA Weather Bot")
+    parser.add_argument(
+        "--mode",
+        choices=["morning", "evening"],
+        default="morning",
+        help="morning=今日(含語錄), evening=明日預報(無語錄)",
+    )
+    args = parser.parse_args()
+    mode = args.mode
+
+    log.info("=== SOCA Weather Bot 啟動 (mode=%s) ===", mode)
     try:
         token = read_secret(TOKEN_FILE)
         chat_id = read_secret(CHAT_ID_FILE)
@@ -254,24 +284,28 @@ def main() -> int:
         log.error("讀取 secret 失敗：%s", e)
         return 2
 
+    forecast_days = 1 if mode == "morning" else 2
+    api_url = build_open_meteo_url(forecast_days)
+
     try:
-        log.info("呼叫 Open-Meteo API")
-        data = http_get_json(OPEN_METEO_URL)
+        log.info("呼叫 Open-Meteo API (forecast_days=%d)", forecast_days)
+        data = http_get_json(api_url)
     except Exception as e:
         log.exception("Open-Meteo API 失敗：%s", e)
         # 失敗時仍然推一則簡短訊息，避免靜默失敗
+        label = "今早" if mode == "morning" else "明日"
         try:
             send_telegram(
                 token,
                 chat_id,
-                f"⚠️ 今早天氣預報暫時拿不到（Open-Meteo API 失敗）。\n錯誤：<code>{type(e).__name__}: {e}</code>",
+                f"⚠️ {label}天氣預報暫時拿不到（Open-Meteo API 失敗）。\n錯誤：<code>{type(e).__name__}: {e}</code>",
             )
         except Exception:
             log.exception("Telegram 失敗訊息也送不出去")
         return 3
 
     try:
-        text = build_broadcast(data)
+        text = build_broadcast(data, mode=mode)
     except Exception as e:
         log.exception("產生播報內容失敗：%s", e)
         return 4

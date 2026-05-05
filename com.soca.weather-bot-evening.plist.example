@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Example launchd plist for soca-weather-bot evening mode (隔日預報).
+
+  Setup:
+    1. 複製這份檔案到 ~/Library/LaunchAgents/com.soca.weather-bot-evening.plist
+    2. 把所有 /Users/YOUR_USERNAME/ 改成你的實際路徑
+    3. launchctl load ~/Library/LaunchAgents/com.soca.weather-bot-evening.plist
+
+  與 morning 排程的差異：
+    - 多了 --mode evening 參數，會推「隔天」的預報、不含語錄
+    - 觸發時間 23:00（晚安播報）
+    - 自己的 launchd-evening.{out,err}.log
+-->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.soca.weather-bot-evening</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>/Users/YOUR_USERNAME/projects/soca-weather-bot/weather_bot.py</string>
+        <string>--mode</string>
+        <string>evening</string>
+    </array>
+
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>23</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>/Users/YOUR_USERNAME/projects/soca-weather-bot/logs/launchd-evening.out.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/Users/YOUR_USERNAME/projects/soca-weather-bot/logs/launchd-evening.err.log</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/usr/local/bin:/usr/bin:/bin:/opt/homebrew/bin</string>
+        <key>LANG</key>
+        <string>en_US.UTF-8</string>
+    </dict>
+</dict>
+</plist>
