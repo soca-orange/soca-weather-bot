@@ -16,7 +16,10 @@ import argparse
 import json
 import logging
 import os
+import socket
 import sys
+import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from datetime import datetime, timezone, timedelta
@@ -108,10 +111,45 @@ def read_secret(path: Path) -> str:
     return path.read_text(encoding="utf-8").strip()
 
 
-def http_get_json(url: str, timeout: int = 15) -> dict:
+def http_get_json(
+    url: str,
+    timeout: int = 15,
+    retries: int = 4,
+    backoff_base: float = 2.0,
+) -> dict:
+    """
+    GET + JSON，遇到暫時性錯誤（5xx、timeout、連線失敗）會以指數退避重試。
+    重試延遲：2s, 4s, 8s, 16s（最多 retries 次重試 = 共 retries+1 次嘗試）。
+    """
     req = urllib.request.Request(url, headers={"User-Agent": "SOCA-Weather-Bot/1.0"})
-    with urllib.request.urlopen(req, timeout=timeout) as resp:
-        return json.loads(resp.read().decode("utf-8"))
+    last_exc: Exception | None = None
+    for attempt in range(retries + 1):
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                return json.loads(resp.read().decode("utf-8"))
+        except urllib.error.HTTPError as e:
+            # 4xx 不重試（自己參數錯了重試也沒用）；5xx / 408 / 429 重試
+            transient = e.code >= 500 or e.code in (408, 429)
+            last_exc = e
+            if not transient or attempt == retries:
+                raise
+            log.warning(
+                "http_get_json HTTP %s（暫時性，attempt %d/%d）：%s",
+                e.code, attempt + 1, retries + 1, e,
+            )
+        except (urllib.error.URLError, socket.timeout, TimeoutError, ConnectionError) as e:
+            last_exc = e
+            if attempt == retries:
+                raise
+            log.warning(
+                "http_get_json 連線錯誤（attempt %d/%d）：%s",
+                attempt + 1, retries + 1, e,
+            )
+        delay = backoff_base ** (attempt + 1)
+        time.sleep(delay)
+    # 理論上走不到（最後一次失敗會在 except 裡 raise）
+    assert last_exc is not None
+    raise last_exc
 
 
 def http_post_json(url: str, data: dict, timeout: int = 15) -> dict:
