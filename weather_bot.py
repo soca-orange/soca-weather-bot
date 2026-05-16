@@ -311,8 +311,34 @@ def main() -> int:
         default="morning",
         help="morning=今日(含語錄), evening=明日預報(無語錄)",
     )
+    parser.add_argument(
+        "--skip-if-outside",
+        type=str,
+        default=None,
+        help="只在指定時段內執行，格式 HH:MM-HH:MM（24h），用來擋 launchd 補跑",
+    )
     args = parser.parse_args()
     mode = args.mode
+
+    # 守門：擋 launchd 在睡醒後補跑（StartCalendarInterval 預設行為）
+    if args.skip_if_outside:
+        try:
+            start_str, end_str = args.skip_if_outside.split("-")
+            from datetime import datetime, time as dtime
+            sh, sm = [int(x) for x in start_str.split(":")]
+            eh, em = [int(x) for x in end_str.split(":")]
+            now = datetime.now().time()
+            start_t = dtime(sh, sm)
+            end_t = dtime(eh, em)
+            in_window = (start_t <= now <= end_t) if start_t <= end_t else (now >= start_t or now <= end_t)
+            if not in_window:
+                log.info(
+                    "=== SOCA Weather Bot 跳過 (mode=%s, now=%s, window=%s) — 推測為 launchd 補跑 ===",
+                    mode, now.strftime("%H:%M"), args.skip_if_outside,
+                )
+                return 0
+        except Exception as e:
+            log.warning("--skip-if-outside 解析失敗（%s），繼續執行", e)
 
     log.info("=== SOCA Weather Bot 啟動 (mode=%s) ===", mode)
     try:
